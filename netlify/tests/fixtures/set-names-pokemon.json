@@ -1,0 +1,60 @@
+{
+  "errors": [],
+  "results": [
+    {
+      "setNameId": 604,
+      "categoryId": 3,
+      "name": "Base Set",
+      "cleanSetName": "Base Set",
+      "urlName": "base-set",
+      "abbreviation": "BS",
+      "releaseDate": "1999-01-09T00:00:00",
+      "isSupplemental": false,
+      "active": true
+    },
+    {
+      "setNameId": 605,
+      "categoryId": 3,
+      "name": "Base Set 2",
+      "cleanSetName": "Base Set 2",
+      "urlName": "base-set-2",
+      "abbreviation": "BS2",
+      "releaseDate": "2000-02-24T00:00:00",
+      "isSupplemental": false,
+      "active": true
+    },
+    {
+      "setNameId": 609,
+      "categoryId": 3,
+      "name": "DP Training Kit 1 Blue",
+      "cleanSetName": "DP Training Kit 1 Blue",
+      "urlName": "dp-training-kit-1-blue",
+      "abbreviation": "PR",
+      "releaseDate": "2007-09-24T00:00:00",
+      "isSupplemental": false,
+      "active": true
+    },
+    {
+      "setNameId": 1663,
+      "categoryId": 3,
+      "name": "Base Set (Shadowless)",
+      "cleanSetName": "Base Set Shadowless",
+      "urlName": "base-set-shadowless",
+      "abbreviation": "BSS",
+      "releaseDate": "1999-01-09T00:00:00",
+      "isSupplemental": false,
+      "active": true
+    },
+    {
+      "setNameId": 23651,
+      "categoryId": 3,
+      "name": "SV08: Surging Sparks",
+      "cleanSetName": "SV08 Surging Sparks",
+      "urlName": "sv08-surging-sparks",
+      "abbreviation": "SSP",
+      "releaseDate": "2024-11-08T00:00:00",
+      "isSupplemental": false,
+      "active": true
+    }
+  ]
+}

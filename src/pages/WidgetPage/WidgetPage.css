@@ -1,0 +1,15 @@
+html.widget-transparent,
+html.widget-transparent body {
+  background: transparent;
+  overflow: hidden;
+}
+
+.widget-page__invalid {
+  display: inline-block;
+  margin: 1rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  color: #fff;
+  background: rgba(220, 38, 38, 0.85);
+  border-radius: 0.375rem;
+}

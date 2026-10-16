@@ -1,0 +1,23 @@
+.fit-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  overflow: hidden;
+  text-align: center;
+}
+
+.fit-text__content {
+  display: block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.fit-text__content--clamped {
+  display: -webkit-box;
+  max-height: 100%;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--fit-lines);
+  line-clamp: var(--fit-lines);
+}

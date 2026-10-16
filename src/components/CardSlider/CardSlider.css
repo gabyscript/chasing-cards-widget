@@ -1,0 +1,12 @@
+.card-slider {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: hidden;
+  perspective: 1000px;
+}
+
+.card-slider__item {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}

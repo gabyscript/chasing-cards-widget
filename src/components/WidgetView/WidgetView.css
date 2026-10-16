@@ -1,0 +1,15 @@
+.widget-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(var(--card-width) + var(--widget-padding) * 2);
+  padding: var(--widget-padding);
+  color: var(--text-color);
+}
+
+.widget-view__status {
+  margin: 0;
+  font-size: 0.8rem;
+  text-align: center;
+  opacity: 0.6;
+}
