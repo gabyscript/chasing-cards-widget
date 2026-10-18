@@ -32,6 +32,14 @@ describe('getChasingCards', () => {
     expect(calledUrl()).toBe('/api/chasing-cards?setId=604&total=8')
   })
 
+  it('agrega el tcg cuando viene informado', async () => {
+    fetchMock.mockResolvedValueOnce(Response.json({}))
+
+    await getChasingCards({ setId: 23254, total: 5, tcg: 63 })
+
+    expect(calledUrl()).toBe('/api/chasing-cards?setId=23254&total=5&tcg=63')
+  })
+
   it('propaga el signal a fetch', async () => {
     fetchMock.mockResolvedValueOnce(Response.json({}))
     const controller = new AbortController()

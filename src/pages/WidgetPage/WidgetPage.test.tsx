@@ -48,6 +48,16 @@ describe('WidgetPage', () => {
     expect(screen.getByText('$10.00')).toBeInTheDocument()
   })
 
+  it('envía el tcg del link al endpoint', async () => {
+    mockCards()
+    renderWidget('setId=23254&tcg=63&total=5')
+    await flush()
+
+    expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
+      '/api/chasing-cards?setId=23254&total=5&tcg=63',
+    )
+  })
+
   it('usa el código del set con {code}', async () => {
     mockCards()
     renderWidget('setId=604&title=Top%20hits%20%7Bcode%7D')

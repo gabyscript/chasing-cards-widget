@@ -96,6 +96,25 @@ describe('chasing-cards', () => {
     expect(body.cards).toHaveLength(3)
   })
 
+  it.each([
+    ['tcg=63', '&productTypeID=103'],
+    ['tcg=3', '&productTypeID=1'],
+  ])('pide el productTypeID de cartas del TCG (%s)', async (query, expected) => {
+    mockTcgplayer(priceGuide)
+
+    await chasingCards(request(`chasing-cards?setId=604&${query}`))
+
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain(expected)
+  })
+
+  it.each(['', 'tcg=86'])('omite productTypeID sin un TCG mapeado (%s)', async (query) => {
+    mockTcgplayer(priceGuide)
+
+    await chasingCards(request(`chasing-cards?setId=604&${query}`))
+
+    expect(String(fetchMock.mock.calls[0]?.[0])).not.toContain('productTypeID')
+  })
+
   it('responde 404 cuando TCGplayer no conoce el set', async () => {
     mockTcgplayer({})
 
@@ -105,12 +124,14 @@ describe('chasing-cards', () => {
     expect(await response.json()).toMatchObject({ status: 404 })
   })
 
-  it.each(['chasing-cards', 'chasing-cards?setId=x', 'chasing-cards?setId=1&minPrice=abc'])(
-    'responde 400 con parámetros inválidos: %s',
-    async (path) => {
-      expect((await chasingCards(request(path))).status).toBe(400)
-    },
-  )
+  it.each([
+    'chasing-cards',
+    'chasing-cards?setId=x',
+    'chasing-cards?setId=1&minPrice=abc',
+    'chasing-cards?setId=1&tcg=abc',
+  ])('responde 400 con parámetros inválidos: %s', async (path) => {
+    expect((await chasingCards(request(path))).status).toBe(400)
+  })
 
   it('responde 502 con CORS cuando TCGplayer falla', async () => {
     mockTcgplayer({ error: 'boom' }, 503)

@@ -7,10 +7,12 @@ const RETRY_DELAYS_MS = [5_000, 15_000, 30_000, 60_000]
 
 export const useChasingCards = ({
   setId,
+  tcg = null,
   total,
   refresh,
-}: Pick<WidgetConfig, 'setId' | 'total' | 'refresh'>) =>
-  useApiResource(`${setId}:${total}`, (signal) => getChasingCards({ setId, total }, signal), {
-    refreshMs: refresh * MINUTE_MS,
-    retryDelaysMs: RETRY_DELAYS_MS,
-  })
+}: Pick<WidgetConfig, 'setId' | 'total' | 'refresh'> & Partial<Pick<WidgetConfig, 'tcg'>>) =>
+  useApiResource(
+    `${setId}:${tcg}:${total}`,
+    (signal) => getChasingCards({ setId, tcg, total }, signal),
+    { refreshMs: refresh * MINUTE_MS, retryDelaysMs: RETRY_DELAYS_MS },
+  )

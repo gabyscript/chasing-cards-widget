@@ -56,11 +56,11 @@ export const getTcgSets = (tcgId: number, signal?: AbortSignal) =>
   request<TcgSet[]>('tcg-sets', { tcg: String(tcgId) }, signal)
 
 export const getChasingCards = (
-  { setId, total }: { setId: number; total: number },
+  { setId, total, tcg = null }: { setId: number; total: number; tcg?: number | null },
   signal?: AbortSignal,
 ) =>
   request<ChasingCardsResponse>(
     'chasing-cards',
-    { setId: String(setId), total: String(total) },
+    { setId: String(setId), total: String(total), ...(tcg === null ? {} : { tcg: String(tcg) }) },
     signal,
   )

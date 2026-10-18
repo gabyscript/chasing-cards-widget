@@ -1,6 +1,7 @@
 export interface Tcg {
   id: number
   label: string
+  productTypeId: number
 }
 
 export interface TcgSet {

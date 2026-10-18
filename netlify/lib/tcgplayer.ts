@@ -1,9 +1,15 @@
+import { TCGS } from '../../src/constants/tcgs.ts'
+
 const CATALOG_API = 'https://mpapi.tcgplayer.com/v2/Catalog'
 const PRICE_GUIDE_API = 'https://infinite-api.tcgplayer.com/priceguide'
 const CDN_PRODUCT_IMAGE = 'https://tcgplayer-cdn.tcgplayer.com/product'
 const PRICE_GUIDE_MAX_ROWS = 5000
 const REQUEST_TIMEOUT_MS = 8000
 const DEFAULT_MPFEV = '4448'
+
+// Un juego que no está en TCGS (links antiguos) se consulta sin productTypeID.
+export const cardsProductTypeId = (categoryId: number | null) =>
+  TCGS.find((tcg) => tcg.id === categoryId)?.productTypeId ?? null
 
 export interface RawSetName {
   setNameId: number
@@ -77,9 +83,10 @@ export const fetchSetNames = async (categoryId: number) => {
 }
 
 // Un setId inexistente responde 200 con `{}`, por eso `null` indica set no encontrado.
-export const fetchPriceGuideCards = async (setId: number) => {
+export const fetchPriceGuideCards = async (setId: number, productTypeId: number | null = null) => {
+  const productType = productTypeId === null ? '' : `&productTypeID=${productTypeId}`
   const data = await getJson<{ result?: RawPriceGuideCard[] }>(
-    `${PRICE_GUIDE_API}/set/${setId}/cards/?rows=${PRICE_GUIDE_MAX_ROWS}`,
+    `${PRICE_GUIDE_API}/set/${setId}/cards/?rows=${PRICE_GUIDE_MAX_ROWS}${productType}`,
   )
   return data.result ?? null
 }
