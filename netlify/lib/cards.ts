@@ -21,21 +21,60 @@ const toChasingCard = (card: PricedCard): ChasingCard => ({
   imageUrl: productImageUrl(card.productID),
 })
 
+const CONDITION_PRIORITY = [
+  'Near Mint',
+  'Lightly Played',
+  'Moderately Played',
+  'Heavily Played',
+  'Damaged',
+]
+
+// `condition` trae el printing como sufijo ("Near Mint Holofoil"), por eso se compara por prefijo.
+// Una condición desconocida queda al final: solo se usa si no hay otra opción.
+export const conditionRank = (condition: string) => {
+  const index = CONDITION_PRIORITY.findIndex((name) => condition.startsWith(name))
+  return index === -1 ? CONDITION_PRIORITY.length : index
+}
+
+const isBetterCondition = (card: PricedCard, current: PricedCard) => {
+  const rankDiff = conditionRank(card.condition) - conditionRank(current.condition)
+  return rankDiff < 0 || (rankDiff === 0 && card.marketPrice > current.marketPrice)
+}
+
+// TCGplayer a veces trae precios incoherentes (Damaged más caro que Near Mint), así que dentro de
+// cada printing manda la mejor condición disponible, y entre printings el más caro.
+export const pickPreferredPrice = (cards: PricedCard[]): PricedCard | undefined => {
+  const bestByPrinting = new Map<string, PricedCard>()
+
+  for (const card of cards) {
+    const current = bestByPrinting.get(card.printing)
+    if (!current || isBetterCondition(card, current)) {
+      bestByPrinting.set(card.printing, card)
+    }
+  }
+
+  return [...bestByPrinting.values()].reduce<PricedCard | undefined>(
+    (best, card) => (!best || card.marketPrice > best.marketPrice ? card : best),
+    undefined,
+  )
+}
+
 export const selectTopCards = (
   rawCards: RawPriceGuideCard[],
   { total, minPrice = null }: SelectTopCardsOptions,
 ): ChasingCard[] => {
-  const mostValuableByProduct = new Map<number, PricedCard>()
+  const pricedByProduct = new Map<number, PricedCard[]>()
 
   for (const card of rawCards) {
     if (!hasPrice(card)) continue
-    const current = mostValuableByProduct.get(card.productID)
-    if (!current || card.marketPrice > current.marketPrice) {
-      mostValuableByProduct.set(card.productID, card)
-    }
+    const group = pricedByProduct.get(card.productID)
+    if (group) group.push(card)
+    else pricedByProduct.set(card.productID, [card])
   }
 
-  return [...mostValuableByProduct.values()]
+  return [...pricedByProduct.values()]
+    .map(pickPreferredPrice)
+    .filter((card): card is PricedCard => card !== undefined)
     .filter((card) => minPrice === null || card.marketPrice >= minPrice)
     .sort((a, b) => b.marketPrice - a.marketPrice)
     .slice(0, total)

@@ -1,4 +1,4 @@
-import { selectTopCards, toTcgSets } from '../lib/cards.ts'
+import { conditionRank, selectTopCards, toTcgSets } from '../lib/cards.ts'
 import type { RawPriceGuideCard, RawSetName } from '../lib/tcgplayer.ts'
 import priceGuide from './fixtures/priceguide-base-set.json'
 import setNames from './fixtures/set-names-pokemon.json'
@@ -18,11 +18,69 @@ describe('selectTopCards', () => {
     expect(new Set(cards.map((card) => card.productId)).size).toBe(cards.length)
   })
 
-  it('usa el mayor marketPrice entre las condiciones de un mismo producto', () => {
-    const [first] = selectTopCards(rawCards, { total: 1 })
-    const prices = rawCards.filter((c) => c.productID === 42382).map((c) => c.marketPrice ?? 0)
+  it('prioriza Near Mint aunque una condición peor tenga mayor precio', () => {
+    const [card] = selectTopCards(
+      [
+        rawCard({ productID: 1, printing: 'Normal', condition: 'Damaged', marketPrice: 200 }),
+        rawCard({ productID: 1, printing: 'Normal', condition: 'Near Mint', marketPrice: 140 }),
+      ],
+      { total: 1 },
+    )
 
-    expect(first?.marketPrice).toBe(Math.max(...prices))
+    expect(card?.marketPrice).toBe(140)
+  })
+
+  it('sin Near Mint usa la siguiente mejor condición disponible', () => {
+    const [card] = selectTopCards(
+      [
+        rawCard({ productID: 1, printing: 'Normal', condition: 'Damaged', marketPrice: 90 }),
+        rawCard({ productID: 1, printing: 'Normal', condition: 'Lightly Played', marketPrice: 60 }),
+      ],
+      { total: 1 },
+    )
+
+    expect(card?.marketPrice).toBe(60)
+  })
+
+  it('ignora una condición sin precio y pasa a la siguiente', () => {
+    const [card] = selectTopCards(
+      [
+        rawCard({ productID: 1, printing: 'Normal', condition: 'Near Mint', marketPrice: null }),
+        rawCard({ productID: 1, printing: 'Normal', condition: 'Heavily Played', marketPrice: 30 }),
+        rawCard({
+          productID: 1,
+          printing: 'Normal',
+          condition: 'Moderately Played',
+          marketPrice: 25,
+        }),
+      ],
+      { total: 1 },
+    )
+
+    expect(card?.marketPrice).toBe(25)
+  })
+
+  it('aplica la prioridad por printing y muestra el printing más caro', () => {
+    const [card] = selectTopCards(
+      [
+        rawCard({ productID: 1, printing: 'Normal', condition: 'Near Mint', marketPrice: 2 }),
+        rawCard({
+          productID: 1,
+          printing: 'Reverse Holofoil',
+          condition: 'Lightly Played Reverse Holofoil',
+          marketPrice: 8,
+        }),
+        rawCard({
+          productID: 1,
+          printing: 'Reverse Holofoil',
+          condition: 'Damaged Reverse Holofoil',
+          marketPrice: 20,
+        }),
+      ],
+      { total: 1 },
+    )
+
+    expect(card?.marketPrice).toBe(8)
   })
 
   it('mapea al DTO con imagen del CDN de TCGplayer', () => {
@@ -64,6 +122,24 @@ describe('selectTopCards', () => {
     })
 
     expect(card).toMatchObject({ number: null, rarity: null })
+  })
+})
+
+describe('conditionRank', () => {
+  it('ordena de Near Mint a Damaged ignorando el sufijo de printing', () => {
+    const conditions = [
+      'Near Mint Holofoil',
+      'Lightly Played',
+      'Moderately Played Reverse Holofoil',
+      'Heavily Played',
+      'Damaged Holofoil',
+    ]
+
+    expect(conditions.map(conditionRank)).toEqual([0, 1, 2, 3, 4])
+  })
+
+  it('deja al final las condiciones desconocidas', () => {
+    expect(conditionRank('Unopened')).toBeGreaterThan(conditionRank('Damaged'))
   })
 })
 
