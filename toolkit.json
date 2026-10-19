@@ -1,0 +1,117 @@
+{
+  "$schema": "https://streams-toolkit.netlify.app/toolkit.schema.json",
+  "slug": "chasing-cards",
+  "name": "Chasing Cards",
+  "type": "widget",
+  "description": "Muestra en rotación las cartas más valiosas de un set de TCG con su precio de mercado, lista para usar como fuente de navegador en OBS.",
+  "url": "https://chasing-cards-widget.netlify.app",
+  "configUrl": "https://chasing-cards-widget.netlify.app/",
+  "previewUrl": "https://chasing-cards-widget.netlify.app/widget?setId=24288&tcg=80&total=15&duration=2&textColor=black&title=%7Bset%7D&animation=flip&refresh=0",
+  "obs": { "width": 244, "height": 432 },
+  "params": [
+    {
+      "name": "setId",
+      "description": "ID del set. El configurador lo completa al elegir el set.",
+      "required": true
+    },
+    {
+      "name": "tcg",
+      "description": "ID del juego: 1 Magic, 2 Yu-Gi-Oh!, 3 Pokémon, 63 Digimon, 68 One Piece, 71 Lorcana, 80 Dragon Ball Super: Fusion World. Recomendado para que el set muestre sus cartas correctamente.",
+      "required": false,
+      "values": ["1", "2", "3", "63", "68", "71", "80"]
+    },
+    {
+      "name": "total",
+      "description": "Cantidad de cartas en la rotación, ordenadas de mayor a menor precio.",
+      "default": 5,
+      "required": false,
+      "min": 5,
+      "max": 15
+    },
+    {
+      "name": "showPrice",
+      "description": "Muestra el precio de mercado debajo de la carta (1 = sí, 0 = no).",
+      "default": "1",
+      "required": false,
+      "values": ["1", "0"]
+    },
+    {
+      "name": "currency",
+      "description": "Moneda del precio.",
+      "default": "USD",
+      "required": false,
+      "values": ["USD"]
+    },
+    {
+      "name": "duration",
+      "description": "Segundos que se muestra cada carta.",
+      "default": 3,
+      "required": false,
+      "min": 1,
+      "max": 30
+    },
+    {
+      "name": "textColor",
+      "description": "Color del título, nombre y precio: white, black o un color hex (#rrggbb, en la URL como %23rrggbb).",
+      "default": "white",
+      "required": false
+    },
+    {
+      "name": "showTitle",
+      "description": "Muestra el título sobre la carta (1 = sí, 0 = no).",
+      "default": "1",
+      "required": false,
+      "values": ["1", "0"]
+    },
+    {
+      "name": "title",
+      "description": "Texto del título, hasta 40 caracteres. {set} se reemplaza por el nombre del set y {code} por su código.",
+      "default": "Top hits {set}",
+      "required": false
+    },
+    {
+      "name": "showName",
+      "description": "Muestra el nombre de la carta (1 = sí, 0 = no).",
+      "default": "0",
+      "required": false,
+      "values": ["1", "0"]
+    },
+    {
+      "name": "animation",
+      "description": "Animación al cambiar de carta: slide (deslizar), fade (desvanecer) o flip (girar).",
+      "default": "slide",
+      "required": false,
+      "values": ["slide", "fade", "flip"]
+    },
+    {
+      "name": "refresh",
+      "description": "Cada cuántos minutos se actualizan los precios (entre 5 y 120). 0 = nunca.",
+      "default": 30,
+      "required": false,
+      "min": 0,
+      "max": 120
+    },
+    {
+      "name": "cardWidth",
+      "description": "Ancho de la carta en píxeles. El tamaño de la fuente en OBS cambia con este valor.",
+      "default": 180,
+      "required": false,
+      "min": 120,
+      "max": 400
+    }
+  ],
+  "tags": [
+    "obs",
+    "tcg",
+    "cartas",
+    "precios",
+    "pokemon",
+    "magic",
+    "yugioh",
+    "one-piece",
+    "lorcana",
+    "digimon"
+  ],
+  "usage": "USAGE.md",
+  "previewImage": "docs/preview.png"
+}
