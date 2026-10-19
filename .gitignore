@@ -21,9 +21,10 @@ coverage
 # Local Netlify folder
 .netlify
 
-# Markdown: solo se versiona el README.md
+# Markdown: solo se versionan README.md y USAGE.md
 *.md
 !README.md
+!USAGE.md
 
 # Editor directories and files
 .vscode/*
