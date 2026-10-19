@@ -1,0 +1,27 @@
+name: Notificar al toolkit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - toolkit.json
+      - USAGE.md
+      - docs/**
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Disparar el build del toolkit
+        env:
+          BUILD_HOOK: ${{ secrets.TOOLKIT_BUILD_HOOK }}
+        run: |
+          if [ -z "$BUILD_HOOK" ]; then
+            echo "::error::Falta el secret TOOLKIT_BUILD_HOOK"
+            exit 1
+          fi
+          curl --fail --silent --show-error --output /dev/null -X POST -d '{}' "$BUILD_HOOK"
